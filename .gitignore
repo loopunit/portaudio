@@ -40,3 +40,5 @@ portaudio-2.0.pc
 *.exe
 *.out
 *.app
+/.vs
+/tmp
