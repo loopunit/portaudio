@@ -55,50 +55,49 @@ PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiI
 /** Note that on Linux, ALSA is placed before OSS so that the former is preferred over the latter.
  */
 
-PaUtilHostApiInitializerEntry paHostApiInitializers[] =
+PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
 #ifdef __linux__
 
 #if PA_USE_ALSA
-        { paALSA, PaAlsa_Initialize },
+        PaAlsa_Initialize,
 #endif
 
 #if PA_USE_OSS
-        { paOSS, PaOSS_Initialize },
+        PaOSS_Initialize,
 #endif
 
 #else   /* __linux__ */
 
 #if PA_USE_OSS
-        { paOSS, PaOSS_Initialize },
+        PaOSS_Initialize,
 #endif
 
 #if PA_USE_ALSA
-        { paALSA, PaAlsa_Initialize },
+        PaAlsa_Initialize,
 #endif
 
 #endif  /* __linux__ */
 
 #if PA_USE_JACK
-        { paJACK, PaJack_Initialize },
+        PaJack_Initialize,
 #endif
                     /* Added for IRIX, Pieter, oct 2, 2003: */
 #if PA_USE_SGI 
-        { paAL, PaSGI_Initialize },
+        PaSGI_Initialize,
 #endif
 
 #if PA_USE_ASIHPI
-        { paAudioScienceHPI, PaAsiHpi_Initialize },
+        PaAsiHpi_Initialize,
 #endif
 
 #if PA_USE_COREAUDIO
-        { paCoreAudio, PaMacCore_Initialize },
+        PaMacCore_Initialize,
 #endif
 
 #if PA_USE_SKELETON
-        /* just for testing. last in list so it isn't marked as default. */
-        { paInDevelopment, PaSkeleton_Initialize },
+        PaSkeleton_Initialize,
 #endif
 
-        { -1, 0 },   /* NULL terminated array */
+        0   /* NULL terminated array */
     };

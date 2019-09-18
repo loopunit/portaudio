@@ -151,8 +151,7 @@ typedef enum PaErrorCode
     paCanNotReadFromAnOutputOnlyStream,
     paCanNotWriteToAnInputOnlyStream,
     paIncompatibleStreamHostApi,
-    paBadBufferPtr,
-    paIsInitialized
+    paBadBufferPtr
 } PaErrorCode;
 
 
@@ -212,6 +211,12 @@ PaError Pa_Terminate( void );
 */
 typedef int PaDeviceIndex;
 
+
+typedef enum PaAmbisonicMode
+{	
+	paAmbisonicModeDisabled = 0,
+	paAmbisonicModeEnabled = 1,
+} PaAmbisonicMode;
 
 /** A special PaDeviceIndex value indicating that no device is available,
  or should be used.
@@ -290,103 +295,6 @@ typedef enum PaHostApiTypeId
     paWASAPI=13,
     paAudioScienceHPI=14
 } PaHostApiTypeId;
-
-
-/** Returns the number of compiled-in host APIs in this build of PortAudio.
-
- The returned value is large enough that it can be used to dimension
- arrays passed to Pa_GetAvailableHostApis and Pa_GetSelectedHostApis.
-
- FIXME REVIEW The "Available" name should match whatever is chosen for
- Pa_GetAvailableHostApis
-
- @see Pa_GetAvailableHostApis, Pa_GetSelectedHostApis
-*/
-int Pa_GetAvailableHostApisCount( void );
-
-
-/** Returns the type ids of all compiled-in host APIs in initialization order.
-
- Note that the compiled-in host APIs are not necessarily those that are
- installed on the system. It is possible for compiled-in dynamically loaded
- host APIs to be not installed on the system, and it is possible for
- installed audio APIs to not be supported (compiled in to) PortAudio.
-
- @param hostApiTypes (OUT) An array that will be filled with
- host API identifiers, having values belonging to the PaHostApiTypeId enumeration.
-
- @param arrayCapacity The number of usable elements in the hostApiTypes array.
- This value never need by greater than the value returned by
- Pa_GetAvailableHostApisCount().
-
- @param count (OUT) The number of host APIs, returned even on error.
- Upon success, this will be the number of valid elements stored in hostApiTypes.
-
- FIXME REVIEW: Consider a different name for this function, both "available"
- and "supported" are ambiguous between what is available/supported on the
- target platform and what is compiled into PA. Keep in mind that
- Pa_IsFormatSupported refers to formats supported by a device.
- Proposals:
- GetConfiguredHostApis, GetCompiledHostApis
- NOTE: also fix name oPa_GetAvailableHostApisCount
-
- @see Pa_SelectHostApis
-*/
-PaError Pa_GetAvailableHostApis( PaHostApiTypeId *hostApiTypes, int arrayCapacity, int *count );
-
-
-/** Select host APIs and their initialization order.
-
- This function may only be called prior to calling Pa_Initialize()
- or after calling Pa_Terminate(). The selected host APIs take effect the
- next time that Pa_Initialize() is invoked.
-
- @param hostApiTypes An array of host API identifiers, having values belonging 
- to the PaHostApiTypeId enumeration. The specified host APIs must selected
- from thosed returned by Pa_GetAvailableHostApis(). For example, it would be an 
- error to specify a Windows host API while using PortAudio on Mac OS X.
-
- @param count The number of elements in the hostApiTypes array. A count of
- zero causes the default host API selection to be restored.
-
- @return A PaErrorCode indicating whether the call succeeded or failed.
-
- The paHostApiNotFound error code indicates that a host API specified by the
- hostApiTypeIds parameter is not available.
-
- The paInvalidHostApi error indicates that there was a problem with the
- hostApiTypes array. E.g. it contained invalid or duplicate entries.
-
- @note The host API initialization order determines default devices.
- There is no predictable relationship between the order that host APIs appear
- in hostApiTypes, and their hostApiIndexes assigned by Pa_Initialize().
-
- @see PaHostApiTypeId
-*/
-PaError Pa_SelectHostApis( const PaHostApiTypeId *hostApiTypes, int count );
-
-
-/** Returns the type ids of the selected host APIs in initialization order.
-
- @param hostApiTypes (OUT) An array that will be filled with
- host API identifiers, having values belonging to the PaHostApiTypeId enumeration.
-
- @param arrayCapacity The number of usable elements in the hostApiTypes array.
- This value never need by greater than the value returned by
- Pa_GetAvailableHostApisCount().
-
- @param count (OUT) The number of selected host APIs, returned even on error.
- Upon success, this will be the number of valid elements stored in hostApiTypes.
-
- @return A PaErrorCode indicating whether the call succeeded or failed.
-
- The paInsufficientMemory error indicates that arrayCapacity was not large enough
- to accommodate the list of selected host APIs. In this case, the needed
- count is returned in the count parameter.
-
- @see Pa_SelectHostApis
-*/
-PaError Pa_GetSelectedHostApis( PaHostApiTypeId *hostApiTypes, int arrayCapacity, int *count );
 
 
 /** A structure containing information about a particular host API. */
@@ -649,6 +557,11 @@ typedef struct PaStreamParameters
      PaDeviceInfo record for the device specified by the device parameter.
     */
     int channelCount;
+
+	/**
+		TODO
+	*/
+	PaAmbisonicMode ambisonicMode;
 
     /** The sample format of the buffer provided to the stream callback,
      a_ReadStream() or Pa_WriteStream(). It may be any of the formats described

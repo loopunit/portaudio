@@ -69,35 +69,34 @@ PaError PaWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInd
 #endif /* __cplusplus */
 
 
-PaUtilHostApiInitializerEntry paHostApiInitializers[] =
+PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
 
 #if PA_USE_WMME
-        { paMME, PaWinMme_Initialize },
+        PaWinMme_Initialize,
 #endif
 
 #if PA_USE_DS
-        { paDirectSound, PaWinDs_Initialize },
+        PaWinDs_Initialize,
 #endif
 
 #if PA_USE_ASIO
-        { paASIO, PaAsio_Initialize },
+        PaAsio_Initialize,
 #endif
 
 #if PA_USE_WASAPI
-        { paWASAPI, PaWasapi_Initialize },
+		PaWasapi_Initialize,
 #endif
 
 #if PA_USE_WDMKS
-        { paWDMKS, PaWinWdm_Initialize },
+        PaWinWdm_Initialize,
 #endif
 
 #if PA_USE_SKELETON
-        /* just for testing. last in list so it isn't marked as default. */
-        { paInDevelopment, PaSkeleton_Initialize },
+        PaSkeleton_Initialize, /* just for testing. last in list so it isn't marked as default. */
 #endif
 
-        { -1, 0 },   /* NULL terminated array */
+        0   /* NULL terminated array */
     };
 
 
