@@ -5541,13 +5541,13 @@ void _StreamOnStop(PaWasapiStream *stream)
         stream->streamRepresentation.streamFinishedCallback(stream->streamRepresentation.userData);
 }
 
-extern void PaOnThreadStart();
-extern void PaOnThreadStop();
+//extern void PaOnThreadStart();
+//extern void PaOnThreadStop();
 
 // ------------------------------------------------------------------------------------------
 PA_THREAD_FUNC ProcThreadEvent(void *param)
 {
-	PaOnThreadStart();
+	//PaOnThreadStart();
 
 	PaWasapiHostProcessor processor[S_COUNT];
 	HRESULT hr;
@@ -5572,7 +5572,7 @@ PA_THREAD_FUNC ProcThreadEvent(void *param)
 	if (FAILED(hr) && (hr != RPC_E_CHANGED_MODE))
 	{
 		PRINT(("WASAPI: failed ProcThreadEvent CoInitialize"));
-		PaOnThreadStop();
+		//PaOnThreadStop();
 		return (UINT32)paUnanticipatedHostError;
 	}
 	if (hr != RPC_E_CHANGED_MODE)
@@ -5747,7 +5747,7 @@ thread_end:
 	// Notify: state
 	NotifyStateChanged(stream, paWasapiStreamStateThreadStop, hr);
 
-	PaOnThreadStop();
+	//PaOnThreadStop();
 
 	return 0;
 
